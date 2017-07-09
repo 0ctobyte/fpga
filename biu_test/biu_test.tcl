@@ -13,6 +13,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/biu_master/biu_master.
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/biu_slave/biu_slave.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/chip_select/chip_select.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/clk_div/clk_div.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/seg7_controller/seg7_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/seg7_decoder/seg7_decoder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/synchronizer/synchronizer.sv
 

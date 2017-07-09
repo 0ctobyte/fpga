@@ -7,13 +7,13 @@ module uart_rx #(
     parameter STOP_BITS = 1,
     parameter PARITY    = 0
 ) (
-    input                  clk,
-    input                  n_rst,
+    input  wire                 clk,
+    input  wire                 n_rst,
 
-    input                  i_rx,
+    input  wire                 i_rx,
 
-    output                 o_data_valid,
-    output [DATA_BITS-1:0] o_data
+    output wire                 o_data_valid,
+    output wire [DATA_BITS-1:0] o_data
 );
 
     localparam SAMPLES_PER_BIT = int'(CLK_FREQ/BAUD_RATE + 0.5);

@@ -14,7 +14,7 @@ module chip_select #(
 
     wire aligned;
 
-    assign aligned = ~ALIGNED | (i_address[1:0] == 2'b00);
+    assign aligned = ~ALIGNED || (i_address[1:0] == 2'b00);
     assign o_cs    = ((i_address >= BASE_ADDR) && (i_address < (BASE_ADDR + ADDR_SPAN)) && i_data_valid && aligned);
 
 endmodule

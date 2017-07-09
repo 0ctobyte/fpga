@@ -1,7 +1,7 @@
 # ModelSim TCL Simulation Script
 
 set PROJECT uart_rx 
-set FILES {uart_rx.sv ../synchronizer/synchronizer.sv ../clk_div/clk_div.sv}
+set FILES {uart_rx.sv ../synchronizer/synchronizer.sv}
 set TOP_LEVEL_ENTITY uart_rx
 
 # Create a project if it doesn't exist
