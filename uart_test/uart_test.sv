@@ -9,6 +9,7 @@ module uart_test (
     input  wire [17:17]            SW,
 
     input  wire                    UART_RXD,
+    output wire                    UART_TXD,
     output wire [6:0]              HEX0,
     output wire [6:0]              HEX1
 );
@@ -17,6 +18,13 @@ module uart_test (
 
     wire [`DATA_BITS-1:0] uart_rx_data;
     wire                  uart_rx_data_valid;
+
+    wire [`DATA_BITS-1:0] uart_tx_data;
+    wire                  uart_tx_data_valid;
+    wire                  uart_tx_busy;
+
+    assign uart_tx_data_valid = uart_rx_data_valid;
+    assign uart_tx_data       = uart_rx_data;
 
     always_ff @(posedge CLOCK_50, negedge SW[17]) begin
         if (~SW[17]) begin
@@ -40,13 +48,28 @@ module uart_test (
         .o_data(uart_rx_data)
     );
 
-    seg7_decoder (
+    uart_tx #(
+        .CLK_FREQ(`CLK_FREQ),
+        .BAUD_RATE(`BAUD_RATE),
+        .DATA_BITS(`DATA_BITS),
+        .STOP_BITS(`STOP_BITS),
+        .PARITY(`PARITY)
+    ) uart_tx_inst (
+        .clk(CLOCK_50),
+        .n_rst(SW[17]),
+        .i_data_valid(uart_tx_data_valid),
+        .i_data(uart_tx_data),
+        .o_busy(uart_tx_busy),
+        .o_tx(UART_TXD)
+    );
+
+    seg7_decoder hex0 (
         .n_rst(SW[17]),
         .i_hex(recv_data[3:0]),
         .o_hex(HEX0)
     );
 
-    seg7_decoder (
+    seg7_decoder hex1 (
         .n_rst(SW[17]),
         .i_hex(recv_data[7:4]),
         .o_hex(HEX1)

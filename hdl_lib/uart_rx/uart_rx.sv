@@ -71,17 +71,14 @@ module uart_rx #(
         end
     end
 
-    // Count 50 MHz samples when in START state to detect the mid point of the start bit
+    // Count 50 MHz samples when receiving bits to detect mid point of bit 
     always_ff @(posedge clk, negedge n_rst) begin : SAMPLE_COUNTER_Q
         if (~n_rst) begin
             sample_counter <= 'b0;
+        end else if (((state == START) || (state == RECV)) && ~bit_end_detect) begin
+            sample_counter <= sample_counter + 1'b1 ;
         end else begin
-            case ({(state == START || state == RECV), bit_end_detect})
-                2'b00: sample_counter <= 'b0;
-                2'b01: sample_counter <= 'b0;
-                2'b10: sample_counter <= sample_counter + 1'b1;
-                2'b11: sample_counter <= 'b0;
-            endcase
+            sample_counter <= 'b0;
         end
     end
 
@@ -89,13 +86,10 @@ module uart_rx #(
     always_ff @(posedge clk, negedge n_rst) begin : BITS_BAUD_Q
         if (~n_rst) begin
             bits <= 'b0;
+        end else if (state == RECV) begin
+            bits <= (bit_mid_detect) ? bits + 1'b1 : bits;
         end else begin
-            case ({(state == RECV), bit_mid_detect})
-                2'b00: bits <= 'b0;
-                2'b01: bits <= 'b0;
-                2'b10: bits <= bits;
-                2'b11: bits <= bits + 1'b1;
-            endcase
+            bits <= 'b0;
         end
     end
 

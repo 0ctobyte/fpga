@@ -12,6 +12,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE uart_test.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/seg7_decoder/seg7_decoder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/synchronizer/synchronizer.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/uart_rx/uart_rx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/uart_tx/uart_tx.sv
 
 # Set global assignments
 set_global_assignment -name FAMILY "Cyclone IV E"

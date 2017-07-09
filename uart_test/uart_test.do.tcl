@@ -1,7 +1,7 @@
 # ModelSim TCL Simulation Script
 
 set PROJECT uart_test
-set FILES {uart_test.sv ../hdl_lib/seg7_decoder/seg7_decoder.sv ../hdl_lib/synchronizer/synchronizer.sv ../hdl_lib/uart_rx/uart_rx.sv}
+set FILES {uart_test.sv ../hdl_lib/seg7_decoder/seg7_decoder.sv ../hdl_lib/synchronizer/synchronizer.sv ../hdl_lib/uart_rx/uart_rx.sv ../hdl_lib/uart_tx/uart_tx.sv}
 set TOP_LEVEL_ENTITY uart_test
 
 # Create a project if it doesn't exist
@@ -26,7 +26,7 @@ force {SW[17]} 0 0ns, 1 10ns
 
 force UART_RXD 1 0ns, 0 8681ns, 1 26043ns, 0 52086ns, 1 60767ns, 0 78129ns, 1 86810ns
 
-run 100000ns
+run 200000ns
 
 view wave -undock
 wave zoom full
