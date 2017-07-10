@@ -74,7 +74,7 @@ module sync_fifo #(
         if (~n_rst) begin
             wr_addr <= 'b0;
         end else if (wr_addr_en) begin
-            wr_addr <= wr_addr + 1;
+            wr_addr <= wr_addr + 1'b1;
         end
     end
  
@@ -83,7 +83,7 @@ module sync_fifo #(
         if (~n_rst) begin
             rd_addr <= 'b0;
         end else if (rd_addr_en) begin
-            rd_addr <= rd_addr + 1;
+            rd_addr <= rd_addr + 1'b1;
         end
     end
      
