@@ -198,7 +198,7 @@ module uart_test (
         .bus_address(bus_address),
         .bus_data(bus_data),
         .bus_control(bus_control),
-        .o_hex({HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7})
+        .o_hex('{HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7})
     );
 
 endmodule

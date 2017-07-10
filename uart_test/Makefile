@@ -12,7 +12,7 @@ DEVICE := EP4CE115F29C7
 PIN_ASSIGNMENTS_FILE := de2-115.pin.tcl
 
 # Directory where source files are located
-SRCS := uart_test.sv ../hdl_lib/biu_slave/biu_slave.sv ../hdl_lib/biu_master/biu_master.sv ../hdl_lib/chip_select/chip_select.sv ../hdl_lib/dp_ram/dp_ram.sv ../hdl_lib/seg7_decoder/seg7_controller.sv ../hdl_lib/seg7_decoder/seg7_decoder.sv ../hdl_lib/sync_fifo/sync_fifo.sv ../hdl_lib/synchronizer/synchronizer.sv ../hdl_lib/uart_controller/uart_controller.sv ../hdl_lib/uart_rx/uart_rx.sv ../hdl_lib/uart_tx/uart_tx.sv
+SRCS := uart_test.sv ../hdl_lib/biu_slave/biu_slave.sv ../hdl_lib/biu_master/biu_master.sv ../hdl_lib/chip_select/chip_select.sv ../hdl_lib/dp_ram/dp_ram.sv ../hdl_lib/seg7_controller/seg7_controller.sv ../hdl_lib/seg7_decoder/seg7_decoder.sv ../hdl_lib/sync_fifo/sync_fifo.sv ../hdl_lib/synchronizer/synchronizer.sv ../hdl_lib/uart_controller/uart_controller.sv ../hdl_lib/uart_rx/uart_rx.sv ../hdl_lib/uart_tx/uart_tx.sv
 
 all: $(PROJECT).sof
 
