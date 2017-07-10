@@ -1,7 +1,7 @@
-// Multi Port RAM
+// Dual Port RAM
 // 1 asynchronous read port and 1 synchronous write port
 
-module ram_sp_ar_sp_sw #(
+module dp_ram #(
     parameter DATA_WIDTH = 8,
     parameter RAM_DEPTH  = 8,
     parameter BASE_ADDR  = 0

@@ -1,7 +1,7 @@
 # ModelSim TCL Simulation Script
 
 set PROJECT sync_fifo 
-set FILES {../ram_sp_ar_sp_sw/ram_sp_ar_sp_sw.sv sync_fifo.sv}
+set FILES {../dp_ram/dp_ram.sv sync_fifo.sv}
 set TOP_LEVEL_ENTITY sync_fifo
 
 # Create a project if it doesn't exist

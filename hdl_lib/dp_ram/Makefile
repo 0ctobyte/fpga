@@ -1,4 +1,4 @@
-PROJECT := ram_sp_ar_sp_sw
+PROJECT := dp_ram
 
 all: ${PROJECT}.tcl
 	vsim -do $<

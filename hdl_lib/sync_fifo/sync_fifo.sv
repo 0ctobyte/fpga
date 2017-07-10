@@ -54,7 +54,7 @@ module sync_fifo #(
     assign o_fifo_empty = (wr_addr == rd_addr);
 
     // Instantiate RAM for FIFO memory
-    ram_sp_ar_sp_sw #(
+    dp_ram #(
         .DATA_WIDTH(DATA_WIDTH), 
         .RAM_DEPTH(FIFO_DEPTH), 
         .BASE_ADDR(0)

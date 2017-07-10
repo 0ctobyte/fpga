@@ -1,8 +1,8 @@
 # ModelSim TCL Simulation Script
 
-set PROJECT ram_sp_ar_sp_sw
-set FILES {ram_sp_ar_sp_sw.sv}
-set TOP_LEVEL_ENTITY ram_sp_ar_sp_sw
+set PROJECT dp_ram
+set FILES {dp_ram.sv}
+set TOP_LEVEL_ENTITY dp_ram
 
 # Create a project if it doesn't exist
 if {![file isdirectory $PROJECT]} {
