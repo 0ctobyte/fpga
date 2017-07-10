@@ -110,7 +110,7 @@ module uart_controller #(
 
     // On write requests, push data on to the TX FIFO
     assign tx_fifo_wr_en   = biu_slave_en && ~biu_slave_rnw && (biu_slave_address == UART_DR_ADDR);
-    assign tx_fifo_data_in = biu_slave_data_in;
+    assign tx_fifo_data_in = biu_slave_data_in[DATA_BITS-1:0];
 
     // Pop data out of the TX FIFO to the UART transmitter if the transmitter is not busy
     assign tx_fifo_rd_en = ~uart_tx_busy;
