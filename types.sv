@@ -77,3 +77,36 @@ interface biu_slave_if #(
     );
 
 endinterface
+
+interface dp_ram_if #(
+    parameter DATA_WIDTH = 8,
+    parameter RAM_DEPTH  = 8
+) ();
+
+    wire                         wr_en;
+    wire [$clog2(RAM_DEPTH)-1:0] wr_addr;
+    wire [DATA_WIDTH-1:0]        data_in;
+
+    wire                         rd_en;
+    wire [$clog2(RAM_DEPTH)-1:0] rd_addr;
+    wire [DATA_WIDTH-1:0]        data_out;
+
+    modport ram (
+        input  wr_en,
+        input  wr_addr,
+        input  data_in,
+        input  rd_en,
+        input  rd_addr,
+        output data_out
+    );
+
+    modport sys (
+        output wr_en,
+        output wr_addr,
+        output data_in,
+        output rd_en,
+        output rd_addr,
+        input  data_out
+    );
+
+endinterface
