@@ -17,9 +17,15 @@ module uart_rx #(
 );
 
     localparam SAMPLES_PER_BIT = int'(CLK_FREQ/BAUD_RATE + 0.5);
-    localparam IDLE = 5'b00001, START = 5'b00010, RECV = 5'b00100, VALID = 5'b01000, STOP = 5'b10000;
 
-    reg [4:0] state;
+    typedef enum reg [4:0] {
+        IDLE  = 5'b00001,
+        START = 5'b00010,
+        RECV  = 5'b00100,
+        VALID = 5'b01000,
+        STOP  = 5'b10000
+    } state_t;
+    state_t state;
 
     // 50 MHz sample counter. If this reaches SAMPLES_PER_BIT/2 then we are near the middle of the bit
     reg [$clog2(SAMPLES_PER_BIT)-1:0] sample_counter; 

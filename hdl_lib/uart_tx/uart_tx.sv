@@ -7,20 +7,25 @@ module uart_tx #(
     parameter STOP_BITS = 1,
     parameter PARITY    = 0
 ) (
-    input  wire                 clk,
-    input  wire                 n_rst,
+    input  wire                  clk,
+    input  wire                  n_rst,
 
-    input  wire                 i_data_valid,
-    input  wire [DATA_BITS-1:0] i_data,
+    input  wire                  i_data_valid,
+    input  wire  [DATA_BITS-1:0] i_data,
 
-    output wire                 o_busy,
-    output logic                o_tx
+    output wire                  o_busy,
+    output logic                 o_tx
 );
 
     localparam SAMPLES_PER_BIT = int'(CLK_FREQ/BAUD_RATE + 0.5);
-    localparam IDLE = 4'b0001, START = 4'b0010, SEND = 4'b0100, STOP = 4'b1000;
 
-    reg [3:0] state;
+    typedef enum reg [3:0] {
+        IDLE  = 4'b0001,
+        START = 4'b0010,
+        SEND  = 4'b0100,
+        STOP  = 4'b1000
+    } state_t;
+    state_t state;
 
     reg [$clog2(SAMPLES_PER_BIT)-1:0] sample_counter;
     reg [3:0] bits;
