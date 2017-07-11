@@ -49,15 +49,10 @@ module biu_master #(
     // To make this more flexible (and allow multiple masters) a bus arbitration unit
     // shall assume the role of driving the bus signals LOW when IDLE and assert grant signals
     // to the masters. I suspect an additional state (WAIT_GNT) is needed to enable this.
-    always_comb begin
-        case (state)
-            IDLE:     {bus.address, bus.data, bus.control} = 'b0;
-            SEND_REQ: {bus.address, bus.data, bus.control} = {address_q, data_q, rnw_q, 1'b1};
-            WAIT_RSP: {bus.address, bus.data, bus.control} = 'bz;
-            WAIT_REQ: {bus.address, bus.data, bus.control} = 'bz;
-            default:  {bus.address, bus.data, bus.control} = 'bz;
-        endcase
-    end
+    assign {bus.address, bus.data, bus.control} = (state == IDLE)     ? 'bz :
+                                                  (state == SEND_REQ) ? {address_q, data_q, rnw_q, 1'b1} :
+                                                  (state == WAIT_RSP) ? 'bz :
+                                                  (state == WAIT_REQ) ? 'bz : 'bz;
 
     // FSM logic
     // Start off in IDLE, when Master signals biu.en, go to SEND_REQ state and drive the bus with the provided address, data & control signals

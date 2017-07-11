@@ -5,9 +5,9 @@ interface bus_if #(
     parameter DATA_WIDTH = 32
 ) ();
 
-    logic [ADDR_WIDTH-1:0] address;
-    logic [DATA_WIDTH-1:0] data;
-    logic [1:0]            control;
+    tri [ADDR_WIDTH-1:0] address;
+    tri [DATA_WIDTH-1:0] data;
+    tri [1:0]            control;
 
 endinterface
 

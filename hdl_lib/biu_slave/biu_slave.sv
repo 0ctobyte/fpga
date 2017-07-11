@@ -49,14 +49,9 @@ module biu_slave #(
     assign biu.en      = (state == RECV_REQ);
 
     // Bus driving combinational logic
-    always_comb begin
-        case (state)
-            IDLE:     {bus.address, bus.data, bus.control} = 'bz;
-            RECV_REQ: {bus.address, bus.data, bus.control} = {address_q, data_out_q, rnw_q, 1'b0};
-            SEND_RSP: {bus.address, bus.data, bus.control} = {address_q, data_out_q, rnw_q, 1'b1};
-            default:  {bus.address, bus.data, bus.control} = 'bz;
-        endcase
-    end
+    assign {bus.address, bus.data, bus.control} = (state == IDLE)     ? 'bz :
+                                                  (state == RECV_REQ) ? {address_q, data_out_q, rnw_q, 1'b0} :
+                                                  (state == SEND_RSP) ? {address_q, data_out_q, rnw_q, 1'b1} : 'bz;
  
     // FSM logic
     // Start off at IDLE, when chip select == 1 clock in the data on the bus and go to RECV_REQ state
