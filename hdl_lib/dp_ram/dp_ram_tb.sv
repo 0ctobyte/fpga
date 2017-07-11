@@ -6,7 +6,7 @@ module dp_ram_tb;
     dp_ram_if #(
         .DATA_WIDTH(8),
         .RAM_DEPTH(8)
-    ) if_ram ();
+    ) if_dp_ram ();
 
     dp_ram #(
         .DATA_WIDTH(8),
@@ -15,7 +15,7 @@ module dp_ram_tb;
     ) dut (
         .clk(clk),
         .n_rst(n_rst),
-        .if_ram(if_ram)
+        .if_dp_ram(if_dp_ram)
     );
 
 endmodule

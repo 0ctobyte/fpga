@@ -10,7 +10,7 @@ module dp_ram #(
     input  wire   n_rst,
 
     // RAM interface
-    dp_ram_if.ram if_ram
+    dp_ram_if.ram if_dp_ram
 );
 
     // Memory array
@@ -20,16 +20,16 @@ module dp_ram #(
     wire cs_wr;
     wire cs_rd;
 
-    assign cs_wr = (n_rst && if_ram.wr_en && (if_ram.wr_addr >= BASE_ADDR) && (if_ram.wr_addr < (BASE_ADDR + RAM_DEPTH)));
-    assign cs_rd = (n_rst && if_ram.rd_en && (if_ram.rd_addr >= BASE_ADDR) && (if_ram.rd_addr < (BASE_ADDR + RAM_DEPTH)));
+    assign cs_wr = (n_rst && if_dp_ram.wr_en && (if_dp_ram.wr_addr >= BASE_ADDR) && (if_dp_ram.wr_addr < (BASE_ADDR + RAM_DEPTH)));
+    assign cs_rd = (n_rst && if_dp_ram.rd_en && (if_dp_ram.rd_addr >= BASE_ADDR) && (if_dp_ram.rd_addr < (BASE_ADDR + RAM_DEPTH)));
 
     // Asynchronous read; perform read combinationally 
-    assign if_ram.data_out = (cs_rd) ? ram[if_ram.rd_addr] : 'b0;
+    assign if_dp_ram.data_out = (cs_rd) ? ram[if_dp_ram.rd_addr] : 'b0;
 
     // Synchronous write; perform write at positive clock edge
     always_ff @(posedge clk) begin : RAM_WRITE
         if (cs_wr) begin
-            ram[if_ram.wr_addr] <= if_ram.data_in;
+            ram[if_dp_ram.wr_addr] <= if_dp_ram.data_in;
         end 
     end
 

@@ -110,3 +110,35 @@ interface dp_ram_if #(
     );
 
 endinterface
+
+interface fifo_if #(
+    parameter DATA_WIDTH = 8
+) ();
+
+    wire                  wr_en;
+    wire [DATA_WIDTH-1:0] data_in;
+    wire                  full;
+
+    wire                  rd_en;
+    wire [DATA_WIDTH-1:0] data_out;
+    wire                  empty;
+
+    modport fifo (
+        input  wr_en,
+        input  data_in,
+        output full,
+        input  rd_en,
+        output data_out,
+        output empty
+    );
+
+    modport sys (
+        output wr_en,
+        output data_in,
+        input  full,
+        output rd_en,
+        input  data_out,
+        input  empty
+    );
+
+endinterface
