@@ -12,6 +12,12 @@ module sync_fifo #(
     fifo_if.fifo if_fifo
 );
 
+    // RAM interface
+    dp_ram_if #(
+        .DATA_WIDTH(DATA_WIDTH),
+        .RAM_DEPTH(FIFO_DEPTH)
+    ) if_dp_ram (); 
+
     localparam LOG2_FIFO_DEPTH = $clog2(FIFO_DEPTH);
 
     // Read and write pointers
@@ -61,12 +67,6 @@ module sync_fifo #(
             rd_addr <= rd_addr + 1'b1;
         end
     end
-
-    // RAM interface
-    dp_ram_if #(
-        .DATA_WIDTH(DATA_WIDTH),
-        .RAM_DEPTH(FIFO_DEPTH)
-    ) if_dp_ram (); 
 
     // Instantiate RAM for FIFO memory
     dp_ram #(

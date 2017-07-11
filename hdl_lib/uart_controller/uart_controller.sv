@@ -23,6 +23,23 @@ module uart_controller #(
     input  wire i_rx,
     output wire o_tx
 );
+
+    // BIU interface
+    biu_slave_if #(
+        .ADDR_WIDTH(ADDR_WIDTH),
+        .DATA_WIDTH(DATA_WIDTH)
+    ) biu ();
+
+    // RX FIFO interface
+    fifo_if #(
+        .DATA_WIDTH(DATA_WIDTH)
+    ) if_rx_fifo ();
+
+    // TX FIFO interface
+    fifo_if #(
+        .DATA_WIDTH(DATA_WIDTH)
+    ) if_tx_fifo ();
+
     localparam UART_DR_ADDR = 'h0, UART_RSR_ADDR = 'h4, UART_FSR_ADDR = 'h8;
 
     // Three accessible registers: UART_DR, UART_FSR and UART_RSR
@@ -124,12 +141,6 @@ module uart_controller #(
         end
     end
 
-    // BIU interface
-    biu_slave_if #(
-        .ADDR_WIDTH(ADDR_WIDTH),
-        .DATA_WIDTH(DATA_WIDTH)
-    ) biu ();
-
     biu_slave #(
         .ADDR_WIDTH(ADDR_WIDTH),
         .DATA_WIDTH(DATA_WIDTH),
@@ -142,11 +153,6 @@ module uart_controller #(
         .bus(bus),
         .biu(biu)
     );
-
-    // RX FIFO interface
-    fifo_if #(
-        .DATA_WIDTH(DATA_WIDTH)
-    ) if_rx_fifo ();
 
     sync_fifo #(
         .DATA_WIDTH(DATA_BITS),
@@ -170,11 +176,6 @@ module uart_controller #(
         .o_data_valid(uart_rx_data_valid),
         .o_data(uart_rx_data)
     );
-
-    // TX FIFO interface
-    fifo_if #(
-        .DATA_WIDTH(DATA_WIDTH)
-    ) if_tx_fifo ();
 
     sync_fifo #(
         .DATA_WIDTH(DATA_BITS),

@@ -17,6 +17,12 @@ module seg7_controller #(
     output wire [6:0] o_hex [0:NUM_7SEGMENTS-1]
 );
 
+    // BIU slave interface
+    biu_slave_if #(
+        .ADDR_WIDTH(ADDR_WIDTH),
+        .DATA_WIDTH(DATA_WIDTH)
+    ) biu ();
+
     reg [DATA_WIDTH-1:0] hex_q;
 
     assign biu.data_out   = hex_q;
@@ -29,12 +35,6 @@ module seg7_controller #(
             hex_q <= biu.data_in;
         end
     end
-
-    // BIU slave interface
-    biu_slave_if #(
-        .ADDR_WIDTH(ADDR_WIDTH),
-        .DATA_WIDTH(DATA_WIDTH)
-    ) biu ();
 
     biu_slave #(
         .ADDR_WIDTH(ADDR_WIDTH),
