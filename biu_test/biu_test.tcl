@@ -16,6 +16,7 @@ set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/clk_div/clk_div.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/seg7_controller/seg7_controller.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/seg7_decoder/seg7_decoder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../hdl_lib/synchronizer/synchronizer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../types.sv
 
 # Set global assignments
 set_global_assignment -name FAMILY "Cyclone IV E"
