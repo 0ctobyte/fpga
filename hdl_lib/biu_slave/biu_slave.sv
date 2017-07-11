@@ -49,21 +49,14 @@ module biu_slave #(
     assign biu.en      = (state == RECV_REQ);
 
     // Bus driving combinational logic
-    assign {bus.address, bus.data, bus.control} = (state == IDLE)     ? 'bz :
-                                                  (state == RECV_REQ) ? {address_q, data_out_q, rnw_q, 1'b0} :
-                                                  (state == SEND_RSP) ? {address_q, data_out_q, rnw_q, 1'b1} : 'bz;
-
-    // Instantiate the chip select/address decoder module
-    chip_select #(
-        .ADDR_WIDTH(ADDR_WIDTH),
-        .BASE_ADDR(BASE_ADDR),
-        .ADDR_SPAN(ADDR_SPAN),
-        .ALIGNED(ALIGNED)
-    ) biu_slave_chip_select (
-        .i_address(bus.address),
-        .i_data_valid(bus_data_valid),
-        .o_cs(cs)
-    );
+    always_comb begin
+        case (state)
+            IDLE:     {bus.address, bus.data, bus.control} = 'bz;
+            RECV_REQ: {bus.address, bus.data, bus.control} = {address_q, data_out_q, rnw_q, 1'b0};
+            SEND_RSP: {bus.address, bus.data, bus.control} = {address_q, data_out_q, rnw_q, 1'b1};
+            default:  {bus.address, bus.data, bus.control} = 'bz;
+        endcase
+    end
  
     // FSM logic
     // Start off at IDLE, when chip select == 1 clock in the data on the bus and go to RECV_REQ state
@@ -102,5 +95,17 @@ module biu_slave #(
             data_out_q <= biu.data_out;
         end
     end
+
+    // Instantiate the chip select/address decoder module
+    chip_select #(
+        .ADDR_WIDTH(ADDR_WIDTH),
+        .BASE_ADDR(BASE_ADDR),
+        .ADDR_SPAN(ADDR_SPAN),
+        .ALIGNED(ALIGNED)
+    ) biu_slave_chip_select (
+        .i_address(bus.address),
+        .i_data_valid(bus_data_valid),
+        .o_cs(cs)
+    );
 
 endmodule
