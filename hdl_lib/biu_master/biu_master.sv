@@ -49,7 +49,7 @@ module biu_master #(
     // To make this more flexible (and allow multiple masters) a bus arbitration unit
     // shall assume the role of driving the bus signals LOW when IDLE and assert grant signals
     // to the masters. I suspect an additional state (WAIT_GNT) is needed to enable this.
-    assign {bus.address, bus.data, bus.control} = (state == IDLE)     ? 'bz :
+    assign {bus.address, bus.data, bus.control} = (state == IDLE)     ? 'b0 :
                                                   (state == SEND_REQ) ? {address_q, data_q, rnw_q, 1'b1} :
                                                   (state == WAIT_RSP) ? 'bz :
                                                   (state == WAIT_REQ) ? 'bz : 'bz;
