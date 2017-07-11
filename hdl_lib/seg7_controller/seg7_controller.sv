@@ -7,38 +7,34 @@ module seg7_controller #(
     parameter BASE_ADDR     = 32'hc0001000,
     parameter NUM_7SEGMENTS = 8          // Should be between 0 and 8
 ) (
-    input  wire                  clk,
-    input  wire                  n_rst,
+    input  wire       clk,
+    input  wire       n_rst,
 
     // Bus interface
-    inout  wire [ADDR_WIDTH-1:0] bus_address,
-    inout  wire [DATA_WIDTH-1:0] bus_data,
-    inout  wire [1:0]            bus_control,
+    bus_if            bus,
 
     // Seven segment display output
-    output wire [6:0]            o_hex [0:NUM_7SEGMENTS-1]
+    output wire [6:0] o_hex [0:NUM_7SEGMENTS-1]
 );
 
     reg [DATA_WIDTH-1:0] hex_q;
 
-    // BIU slave interface
-    wire [ADDR_WIDTH-1:0] biu_slave_address;
-    wire [DATA_WIDTH-1:0] biu_slave_data_in;
-    wire                  biu_slave_rnw;
-    wire                  biu_slave_en;
-    wire [DATA_WIDTH-1:0] biu_slave_data_out;
-    wire                  biu_slave_data_valid;
-
-    assign biu_slave_data_out   = hex_q;
-    assign biu_slave_data_valid = (biu_slave_en && biu_slave_rnw);
+    assign biu.data_out   = hex_q;
+    assign biu.data_valid = (biu.en && biu.rnw);
 
     always_ff @(posedge clk, negedge n_rst) begin
         if (~n_rst) begin
             hex_q <= 'b0;
-        end else if (biu_slave_en && ~biu_slave_rnw) begin
-            hex_q <= biu_slave_data_in;
+        end else if (biu.en && ~biu.rnw) begin
+            hex_q <= biu.data_in;
         end
     end
+
+    // BIU slave interface
+    biu_slave_if #(
+        .ADDR_WIDTH(ADDR_WIDTH),
+        .DATA_WIDTH(DATA_WIDTH)
+    ) biu ();
 
     biu_slave #(
         .ADDR_WIDTH(ADDR_WIDTH),
@@ -49,15 +45,8 @@ module seg7_controller #(
     ) biu_slave_inst (
         .clk(clk),
         .n_rst(n_rst),
-        .bus_address(bus_address),
-        .bus_data(bus_data),
-        .bus_control(bus_control),
-        .o_address(biu_slave_address),
-        .o_data_in(biu_slave_data_in),
-        .o_rnw(biu_slave_rnw),
-        .o_en(biu_slave_en),
-        .i_data_out(biu_slave_data_out),
-        .i_data_valid(biu_slave_data_valid)
+        .bus(bus),
+        .biu(biu)
     );
 
     // Generate seven segment modules, each module uses 4-bits from the 32-bit hex_q register
