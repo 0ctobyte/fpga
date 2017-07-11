@@ -32,12 +32,12 @@ module uart_controller #(
 
     // RX FIFO interface
     fifo_if #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_BITS)
     ) if_rx_fifo ();
 
     // TX FIFO interface
     fifo_if #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_BITS)
     ) if_tx_fifo ();
 
     localparam UART_DR_ADDR = 'h0, UART_RSR_ADDR = 'h4, UART_FSR_ADDR = 'h8;

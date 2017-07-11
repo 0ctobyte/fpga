@@ -14,43 +14,45 @@ module uart_test_master #(
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32
 ) (
-    input  wire                  clk,
-    input  wire                  n_rst,
+    input  wire clk,
+    input  wire n_rst,
 
     // Bus interface
-    inout  wire [ADDR_WIDTH-1:0] bus_address,
-    inout  wire [DATA_WIDTH-1:0] bus_data,
-    inout  wire [1:0]            bus_control
+    bus_if      bus
 );
 
-    localparam IDLE = 6'b000001, RXFE = 6'b000010, RXRD = 6'b000100, S7WR = 6'b001000, TXFF = 6'b010000, TXWR = 6'b100000;
+    // BIU master interface
+    biu_master_if #(
+        .ADDR_WIDTH(ADDR_WIDTH),
+        .DATA_WIDTH(DATA_WIDTH)
+    ) biu ();
+    
+    typedef enum reg [5:0] {
+        IDLE = 6'b000001,
+        RXFE = 6'b000010,
+        RXRD = 6'b000100,
+        S7WR = 6'b001000,
+        TXFF = 6'b010000,
+        TXWR = 6'b100000
+    } state_t;
+    state_t state;
 
-    reg [5:0] state;
     reg [`DATA_BITS-1:0] rx_data;
     reg rxfe, txff;
-
-    // Interconnect between biu_test_master and biu_master
-    logic [ADDR_WIDTH-1:0] biu_master_address;
-    logic [DATA_WIDTH-1:0] biu_master_data_out;
-    logic                  biu_master_rnw;
-    logic                  biu_master_en;
-    wire  [DATA_WIDTH-1:0] biu_master_data_in;
-    wire                   biu_master_data_valid;
-    wire                   biu_master_busy;
 
     always_ff @(posedge clk, negedge n_rst) begin
         if (~n_rst) begin
             rx_data <= 'b0;
-        end else if (state == RXRD && biu_master_data_valid) begin
-            rx_data <= biu_master_data_in[`DATA_BITS-1:0];
+        end else if (state == RXRD && biu.data_valid) begin
+            rx_data <= biu.data_in[`DATA_BITS-1:0];
         end
     end
 
     always_ff @(posedge clk, negedge n_rst) begin
         if (~n_rst) begin
             rxfe <= 'b1;
-        end else if (state == RXFE && biu_master_data_valid) begin
-            rxfe <= biu_master_data_in[0];
+        end else if (state == RXFE && biu.data_valid) begin
+            rxfe <= biu.data_in[0];
         end else begin
             rxfe <= 'b1;
         end
@@ -59,8 +61,8 @@ module uart_test_master #(
     always_ff @(posedge clk, negedge n_rst) begin
         if (~n_rst) begin
             txff <= 'b1;
-        end else if (state == TXFF && biu_master_data_valid) begin
-            txff <= biu_master_data_in[1];
+        end else if (state == TXFF && biu.data_valid) begin
+            txff <= biu.data_in[1];
         end else begin
             txff <= 'b1;
         end
@@ -73,7 +75,7 @@ module uart_test_master #(
             case (state)
                 IDLE: state <= RXFE;
                 RXFE: state <= (~rxfe) ? RXRD : RXFE;
-                RXRD: state <= (biu_master_data_valid) ? S7WR : RXRD;
+                RXRD: state <= (biu.data_valid) ? S7WR : RXRD;
                 S7WR: state <= TXFF;
                 TXFF: state <= (~txff) ? TXWR : TXFF;
                 TXWR: state <= IDLE;
@@ -84,40 +86,40 @@ module uart_test_master #(
     always_comb begin
         case (state)
             IDLE: begin
-                biu_master_address  <= 'b0;
-                biu_master_data_out <= 'b0;
-                biu_master_rnw      <= 'b0;
-                biu_master_en       <= 'b0;
+                biu.address  <= 'b0;
+                biu.data_out <= 'b0;
+                biu.rnw      <= 'b0;
+                biu.en       <= 'b0;
             end
             RXFE: begin
-                biu_master_address  <= `UART_SLAVE_ADDR + 8;
-                biu_master_data_out <= 'b0;
-                biu_master_rnw      <= 'b1;
-                biu_master_en       <= rxfe && ~biu_master_busy;
+                biu.address  <= `UART_SLAVE_ADDR + 8;
+                biu.data_out <= 'b0;
+                biu.rnw      <= 'b1;
+                biu.en       <= rxfe && ~biu.busy;
             end
             RXRD: begin
-                biu_master_address  <= `UART_SLAVE_ADDR;
-                biu_master_data_out <= 'b0;
-                biu_master_rnw      <= 'b1;
-                biu_master_en       <= ~biu_master_busy;
+                biu.address  <= `UART_SLAVE_ADDR;
+                biu.data_out <= 'b0;
+                biu.rnw      <= 'b1;
+                biu.en       <= ~biu.busy;
             end
             S7WR: begin
-                biu_master_address  <= `SEG7_SLAVE_ADDR;
-                biu_master_data_out <= rx_data;
-                biu_master_rnw      <= 'b0;
-                biu_master_en       <= ~biu_master_busy;
+                biu.address  <= `SEG7_SLAVE_ADDR;
+                biu.data_out <= rx_data;
+                biu.rnw      <= 'b0;
+                biu.en       <= ~biu.busy;
             end
             TXFF: begin
-                biu_master_address  <= `UART_SLAVE_ADDR + 8;
-                biu_master_data_out <= 'b0;
-                biu_master_rnw      <= 'b1;
-                biu_master_en       <= txff && ~biu_master_busy;
+                biu.address  <= `UART_SLAVE_ADDR + 8;
+                biu.data_out <= 'b0;
+                biu.rnw      <= 'b1;
+                biu.en       <= txff && ~biu.busy;
             end
             TXWR: begin
-                biu_master_address  <= `UART_SLAVE_ADDR;
-                biu_master_data_out <= rx_data;
-                biu_master_rnw      <= 'b0;
-                biu_master_en       <= ~biu_master_busy;
+                biu.address  <= `UART_SLAVE_ADDR;
+                biu.data_out <= rx_data;
+                biu.rnw      <= 'b0;
+                biu.en       <= ~biu.busy;
             end
         endcase
     end
@@ -128,16 +130,8 @@ module uart_test_master #(
     ) biu_master0 (
         .clk(clk),
         .n_rst(n_rst),
-        .bus_address(bus_address),
-        .bus_data(bus_data),
-        .bus_control(bus_control),
-        .i_address(biu_master_address),
-        .i_data_out(biu_master_data_out),
-        .i_rnw(biu_master_rnw),
-        .i_en(biu_master_en),
-        .o_data_in(biu_master_data_in),
-        .o_data_valid(biu_master_data_valid),
-        .o_busy(biu_master_busy)
+        .bus(bus),
+        .biu(biu)
     );
 
 endmodule
@@ -151,10 +145,11 @@ module uart_test (
     output wire [6:0]              HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
 );
 
-    // Shared bus
-    tri [`ADDR_WIDTH-1:0] bus_address;
-    tri [`DATA_WIDTH-1:0] bus_data;
-    tri [1:0]             bus_control;
+    // Bus interface
+    bus_if #(
+        .ADDR_WIDTH(`ADDR_WIDTH),
+        .DATA_WIDTH(`DATA_WIDTH)
+    ) bus ();
 
     uart_test_master #(
         .ADDR_WIDTH(`ADDR_WIDTH),
@@ -162,9 +157,7 @@ module uart_test (
     ) uart_test_master_inst (
         .clk(CLOCK_50),
         .n_rst(SW[17]),
-        .bus_address(bus_address),
-        .bus_data(bus_data),
-        .bus_control(bus_control)
+        .bus(bus)
     );
 
     uart_controller #(
@@ -180,9 +173,7 @@ module uart_test (
     ) uart_controller_inst (
         .clk(CLOCK_50),
         .n_rst(SW[17]),
-        .bus_address(bus_address),
-        .bus_data(bus_data),
-        .bus_control(bus_control),
+        .bus(bus),
         .i_rx(UART_RXD),
         .o_tx(UART_TXD)
     );
@@ -195,9 +186,7 @@ module uart_test (
     ) seg7_controller_inst (
         .clk(CLOCK_50),
         .n_rst(SW[17]),
-        .bus_address(bus_address),
-        .bus_data(bus_data),
-        .bus_control(bus_control),
+        .bus(bus),
         .o_hex('{HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7})
     );
 

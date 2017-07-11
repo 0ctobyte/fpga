@@ -1,7 +1,7 @@
 # ModelSim TCL Simulation Script
 
 set PROJECT uart_test
-set FILES {uart_test.sv ../hdl_lib/biu_slave/biu_slave.sv ../hdl_lib/biu_master/biu_master.sv ../hdl_lib/chip_select/chip_select.sv ../hdl_lib/dp_ram/dp_ram.sv ../hdl_lib/seg7_controller/seg7_controller.sv ../hdl_lib/seg7_decoder/seg7_decoder.sv ../hdl_lib/sync_fifo/sync_fifo.sv ../hdl_lib/synchronizer/synchronizer.sv ../hdl_lib/uart_controller/uart_controller.sv ../hdl_lib/uart_rx/uart_rx.sv ../hdl_lib/uart_tx/uart_tx.sv}
+set FILES {uart_test.sv ../hdl_lib/biu_slave/biu_slave.sv ../hdl_lib/biu_master/biu_master.sv ../hdl_lib/chip_select/chip_select.sv ../hdl_lib/dp_ram/dp_ram.sv ../hdl_lib/seg7_controller/seg7_controller.sv ../hdl_lib/seg7_decoder/seg7_decoder.sv ../hdl_lib/sync_fifo/sync_fifo.sv ../hdl_lib/synchronizer/synchronizer.sv ../hdl_lib/uart_controller/uart_controller.sv ../hdl_lib/uart_rx/uart_rx.sv ../hdl_lib/uart_tx/uart_tx.sv ../types.sv}
 set TOP_LEVEL_ENTITY uart_test
 
 # Create a project if it doesn't exist
