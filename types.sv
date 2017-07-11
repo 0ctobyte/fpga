@@ -60,19 +60,19 @@ interface biu_slave_if #(
 
     modport biu (
         output address,
-        output data_out,
+        output data_in,
         output rnw,
         output en,
-        input  data_in,
+        input  data_out,
         input  data_valid
     );
 
     modport device (
         input  address,
-        input  data_out,
+        input  data_in,
         input  rnw,
         input  en,
-        output data_in,
+        output data_out,
         output data_valid
     );
 
