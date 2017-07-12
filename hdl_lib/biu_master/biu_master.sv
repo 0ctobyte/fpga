@@ -17,7 +17,7 @@ module biu_master #(
 );
 
     // FSM state encodings
-    typedef enum reg [3:0] {
+    typedef enum logic [3:0] {
         IDLE     = 4'b0001,
         SEND_REQ = 4'b0010,
         WAIT_RSP = 4'b0100,

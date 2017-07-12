@@ -18,7 +18,7 @@ module uart_rx #(
 
     localparam SAMPLES_PER_BIT = int'(CLK_FREQ/BAUD_RATE + 0.5);
 
-    typedef enum reg [4:0] {
+    typedef enum logic [4:0] {
         IDLE  = 5'b00001,
         START = 5'b00010,
         RECV  = 5'b00100,

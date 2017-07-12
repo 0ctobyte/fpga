@@ -18,7 +18,7 @@ module biu_slave #(
 );
 
     // FSM state encodings
-    typedef enum reg [2:0] {
+    typedef enum logic [2:0] {
         IDLE     = 3'b001,
         RECV_REQ = 3'b010,
         SEND_RSP = 3'b100

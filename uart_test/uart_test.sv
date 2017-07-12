@@ -27,7 +27,7 @@ module uart_test_master #(
         .DATA_WIDTH(DATA_WIDTH)
     ) biu ();
     
-    typedef enum reg [5:0] {
+    typedef enum logic [5:0] {
         IDLE = 6'b000001,
         RXFE = 6'b000010,
         RXRD = 6'b000100,
