@@ -7,14 +7,14 @@ module seg7_controller #(
     parameter BASE_ADDR     = 32'hc0001000,
     parameter NUM_7SEGMENTS = 8          // Should be between 0 and 8
 ) (
-    input  wire       clk,
-    input  wire       n_rst,
+    input  logic       clk,
+    input  logic       n_rst,
 
     // Bus interface
-    bus_if            bus,
+    bus_if             bus,
 
     // Seven segment display output
-    output wire [6:0] o_hex [0:NUM_7SEGMENTS-1]
+    output logic [6:0] o_hex [0:NUM_7SEGMENTS-1]
 );
 
     // BIU slave interface
@@ -23,7 +23,7 @@ module seg7_controller #(
         .DATA_WIDTH(DATA_WIDTH)
     ) biu ();
 
-    reg [DATA_WIDTH-1:0] hex_q;
+    logic [DATA_WIDTH-1:0] hex_q;
 
     assign biu.data_out   = hex_q;
     assign biu.data_valid = (biu.en && biu.rnw);

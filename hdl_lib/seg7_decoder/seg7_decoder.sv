@@ -3,9 +3,9 @@
 // a seven segment display
 
 module seg7_decoder (
-    input  wire        n_rst,
+    input  logic       n_rst,
 
-    input  wire  [3:0] i_hex,
+    input  logic [3:0] i_hex,
     output logic [6:0] o_hex
 );
 

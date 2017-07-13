@@ -7,13 +7,13 @@ module uart_rx #(
     parameter STOP_BITS = 1,
     parameter PARITY    = 0
 ) (
-    input  wire                 clk,
-    input  wire                 n_rst,
+    input  logic                 clk,
+    input  logic                 n_rst,
 
-    input  wire                 i_rx,
+    input  logic                 i_rx,
 
-    output wire                 o_data_valid,
-    output wire [DATA_BITS-1:0] o_data
+    output logic                 o_data_valid,
+    output logic [DATA_BITS-1:0] o_data
 );
 
     localparam SAMPLES_PER_BIT = int'(CLK_FREQ/BAUD_RATE + 0.5);
@@ -28,21 +28,21 @@ module uart_rx #(
     state_t state;
 
     // 50 MHz sample counter. If this reaches SAMPLES_PER_BIT/2 then we are near the middle of the bit
-    reg [$clog2(SAMPLES_PER_BIT)-1:0] sample_counter; 
+    logic [$clog2(SAMPLES_PER_BIT)-1:0] sample_counter; 
 
     // Bit counter
-    reg [3:0] bits;
+    logic [3:0] bits;
 
     // Data shift register
-    reg [DATA_BITS-1:0] data_recv;
+    logic [DATA_BITS-1:0] data_recv;
 
     // Pass i_rx through a 2ff synchronizer to limit metastability issues
-    wire rx_syncd;
+    logic rx_syncd;
 
     // Assert when mid point of bit is detected
     // Assert when end point of bit is detected
-    wire bit_mid_detect;
-    wire bit_end_detect;
+    logic bit_mid_detect;
+    logic bit_end_detect;
 
     assign bit_mid_detect = (sample_counter == (SAMPLES_PER_BIT/2));
     assign bit_end_detect = (sample_counter == SAMPLES_PER_BIT);

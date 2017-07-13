@@ -8,14 +8,14 @@ module biu_test_master #(
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32
 ) ( 
-    input  wire        clk,
-    input  wire        n_rst,
+    input  logic        clk,
+    input  logic        n_rst,
 
     // Switch input
-    input  wire [15:0] sw_input,
+    input  logic [15:0] sw_input,
 
     // Bus interface
-    bus_if             bus 
+    bus_if              bus 
 );
 
     // BIU master interface
@@ -24,8 +24,8 @@ module biu_test_master #(
         .DATA_WIDTH(DATA_WIDTH)
     ) biu ();
 
-    wire [15:0] syncd_sw;
-    reg  [15:0] syncd_sw_q [0:2];
+    logic [15:0] syncd_sw;
+    logic [15:0] syncd_sw_q [0:2];
 
     assign biu.address  = `SLAVE_ADDR;
     assign biu.data_out = {syncd_sw, syncd_sw};
@@ -67,10 +67,10 @@ module biu_test_master #(
 endmodule
 
 module biu_test (
-    input  wire         CLOCK_50,
+    input  logic         CLOCK_50,
 
-    input  wire [17:0]  SW,
-    output wire [6:0]   HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
+    input  logic [17:0]  SW,
+    output logic [6:0]   HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
 );
 
     // Bus interface

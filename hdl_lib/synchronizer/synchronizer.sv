@@ -8,15 +8,15 @@ module synchronizer #(
     parameter                  SYNC_DEPTH = 2,
     parameter [DATA_WIDTH-1:0] RESET_VAL  = 0
 ) (
-    input  wire                  clk,
-    input  wire                  n_rst,
+    input  logic                  clk,
+    input  logic                  n_rst,
 
-    input  wire [DATA_WIDTH-1:0] i_async_data,
-    output wire [DATA_WIDTH-1:0] o_sync_data
+    input  logic [DATA_WIDTH-1:0] i_async_data,
+    output logic [DATA_WIDTH-1:0] o_sync_data
 );
 
     // Synchronization flops
-    (* altera_attribute = "-name SYNCHRONIZER_IDENTIFICATION FORCED_IF_ASYNCHRONOUS" *) reg [DATA_WIDTH-1:0] sync_flops [0:SYNC_DEPTH-1];
+    (* altera_attribute = "-name SYNCHRONIZER_IDENTIFICATION FORCED_IF_ASYNCHRONOUS" *) logic [DATA_WIDTH-1:0] sync_flops [0:SYNC_DEPTH-1];
 
     // The last stage of flops in the synchronization pipeline holds our synchronized signal
     assign o_sync_data = sync_flops[SYNC_DEPTH-1];

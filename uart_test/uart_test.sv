@@ -14,11 +14,11 @@ module uart_test_master #(
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32
 ) (
-    input  wire clk,
-    input  wire n_rst,
+    input  logic clk,
+    input  logic n_rst,
 
     // Bus interface
-    bus_if      bus
+    bus_if       bus
 );
 
     // BIU master interface
@@ -37,8 +37,8 @@ module uart_test_master #(
     } state_t;
     state_t state;
 
-    reg [`DATA_BITS-1:0] rx_data;
-    reg rxfe, txff;
+    logic [`DATA_BITS-1:0] rx_data;
+    logic rxfe, txff;
 
     always_ff @(posedge clk, negedge n_rst) begin
         if (~n_rst) begin
@@ -137,12 +137,12 @@ module uart_test_master #(
 endmodule
 
 module uart_test (
-    input  wire                    CLOCK_50,
-    input  wire [17:17]            SW,
+    input  logic                    CLOCK_50,
+    input  logic [17:17]            SW,
 
-    input  wire                    UART_RXD,
-    output wire                    UART_TXD,
-    output wire [6:0]              HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
+    input  logic                    UART_RXD,
+    output logic                    UART_TXD,
+    output logic [6:0]              HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
 );
 
     // Bus interface

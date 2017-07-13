@@ -1,9 +1,9 @@
 module seg7_controller_tb;
 
-    wire clk;
-    wire n_rst;
+    logic clk;
+    logic n_rst;
 
-    wire [6:0] hex [0:7];
+    logic [6:0] hex [0:7];
 
     bus_if #(
         .ADDR_WIDTH(32),

@@ -6,8 +6,8 @@ module biu_master #(
     parameter ADDR_WIDTH = 32,
     parameter DATA_WIDTH = 32
 ) (
-    input  wire       clk,
-    input  wire       n_rst,
+    input  logic      clk,
+    input  logic      n_rst,
 
     // Bus interface
     bus_if            bus,
@@ -26,13 +26,13 @@ module biu_master #(
     state_t state;
 
     // Internal registers for Master interface inputs
-    reg [ADDR_WIDTH-1:0] address_q;
-    reg [DATA_WIDTH-1:0] data_q;
-    reg rnw_q;
+    logic [ADDR_WIDTH-1:0] address_q;
+    logic [DATA_WIDTH-1:0] data_q;
+    logic rnw_q;
 
     // Bus control signals
-    wire bus_rnw;
-    wire bus_data_valid;
+    logic bus_rnw;
+    logic bus_data_valid;
 
     // Fan out the bus control signals
     assign bus_rnw        = bus.control[1];

@@ -1,7 +1,7 @@
 module biu_master_tb;
 
-    wire clk;
-    wire n_rst;
+    logic clk;
+    logic n_rst;
 
     bus_if #(
         .ADDR_WIDTH(32),

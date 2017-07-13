@@ -1,10 +1,10 @@
 module uart_controller_tb;
 
-    wire clk;
-    wire n_rst;
+    logic clk;
+    logic n_rst;
 
-    wire i_rx;
-    wire o_tx;
+    logic i_rx;
+    logic o_tx;
 
     bus_if #(
         .ADDR_WIDTH(32),

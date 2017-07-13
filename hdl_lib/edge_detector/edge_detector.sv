@@ -6,16 +6,16 @@
 module edge_detector #(
     parameter EDGE = 1  // Default "1" == detect posedge 
 ) (
-    input  wire clk,
-    input  wire n_rst,
+    input  logic clk,
+    input  logic n_rst,
 
-    input  wire i_async,
-    output wire o_pulse
+    input  logic i_async,
+    output logic o_pulse
 );
 
     // Last two flops in the synchronization pipeline
-    reg  pulse1;
-    wire pulse0;
+    logic pulse1;
+    logic pulse0;
 
     generate if (~EDGE)
         assign o_pulse = pulse1 & ~pulse0;

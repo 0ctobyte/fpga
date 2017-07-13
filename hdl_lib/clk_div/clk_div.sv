@@ -4,16 +4,16 @@ module clk_div #(
     parameter  CLK_FREQ = 50000000,
     parameter  TGT_FREQ = 25000000
 ) (
-    input  wire clk,
-    input  wire n_rst,
+    input  logic clk,
+    input  logic n_rst,
 
-    input  wire i_en,
-    output wire o_clk
+    input  logic i_en,
+    output logic o_clk
 );
 
     localparam CLK_DIV  = int'(CLK_FREQ/TGT_FREQ + 0.5);
 
-    reg [$clog2(CLK_DIV)-1:0] counter;
+    logic [$clog2(CLK_DIV)-1:0] counter;
 
     assign o_clk = (counter < (CLK_DIV/2));
 

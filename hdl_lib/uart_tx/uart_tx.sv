@@ -7,14 +7,14 @@ module uart_tx #(
     parameter STOP_BITS = 1,
     parameter PARITY    = 0
 ) (
-    input  wire                  clk,
-    input  wire                  n_rst,
+    input  logic                  clk,
+    input  logic                  n_rst,
 
-    input  wire                  i_data_valid,
-    input  wire  [DATA_BITS-1:0] i_data,
+    input  logic                  i_data_valid,
+    input  logic  [DATA_BITS-1:0] i_data,
 
-    output wire                  o_busy,
-    output logic                 o_tx
+    output logic                  o_busy,
+    output logic                  o_tx
 );
 
     localparam SAMPLES_PER_BIT = int'(CLK_FREQ/BAUD_RATE + 0.5);
@@ -27,14 +27,14 @@ module uart_tx #(
     } state_t;
     state_t state;
 
-    reg [$clog2(SAMPLES_PER_BIT)-1:0] sample_counter;
-    reg [3:0] bits;
+    logic [$clog2(SAMPLES_PER_BIT)-1:0] sample_counter;
+    logic [3:0] bits;
 
-    reg [DATA_BITS-1:0] data_shift_out;
+    logic [DATA_BITS-1:0] data_shift_out;
 
-    wire bit_start_detect;
-    wire bit_end_detect;
-    wire busy;
+    logic bit_start_detect;
+    logic bit_end_detect;
+    logic busy;
 
     // Assert busy signal if sending data
     assign busy = (state != IDLE);

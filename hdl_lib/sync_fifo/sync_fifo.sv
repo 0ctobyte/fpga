@@ -5,8 +5,8 @@ module sync_fifo #(
     parameter  DATA_WIDTH = 8,
     parameter  FIFO_DEPTH = 8
 ) (
-    input  wire  clk,
-    input  wire  n_rst,
+    input  logic clk,
+    input  logic n_rst,
 
     // FIFO interface
     fifo_if.fifo if_fifo
@@ -21,12 +21,12 @@ module sync_fifo #(
     localparam LOG2_FIFO_DEPTH = $clog2(FIFO_DEPTH);
 
     // Read and write pointers
-    reg [LOG2_FIFO_DEPTH:0] wr_addr;
-    reg [LOG2_FIFO_DEPTH:0] rd_addr;
+    logic [LOG2_FIFO_DEPTH:0] wr_addr;
+    logic [LOG2_FIFO_DEPTH:0] rd_addr;
 
     // Enable signals for the rd_addr and wr_addr registers
-    wire wr_addr_en;
-    wire rd_addr_en;
+    logic wr_addr_en;
+    logic rd_addr_en;
 
     // Don't update the rd_addr register if the the fifo is empty even if rd_en is asserted
     // Similarly don't update the wr_addr register if the fifo is full even if wr_en is asserted

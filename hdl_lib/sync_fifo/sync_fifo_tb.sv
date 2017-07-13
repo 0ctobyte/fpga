@@ -1,7 +1,7 @@
 module sync_fifo_tb;
 
-    wire clk;
-    wire n_rst;
+    logic clk;
+    logic n_rst;
 
     fifo_if #(
         .DATA_WIDTH(8)

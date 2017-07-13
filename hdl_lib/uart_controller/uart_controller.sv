@@ -13,15 +13,15 @@ module uart_controller #(
     parameter STOP_BITS  = 1,
     parameter PARITY     = 0
 ) (
-    input  wire clk,
-    input  wire n_rst,
+    input  logic clk,
+    input  logic n_rst,
 
     // Bus interface
-    bus_if      bus,
+    bus_if       bus,
 
     // UART interface
-    input  wire i_rx,
-    output wire o_tx
+    input  logic i_rx,
+    output logic o_tx
 );
 
     // BIU interface
@@ -60,7 +60,7 @@ module uart_controller #(
     // ------------------------------------
     // OE  - Overrun Error (receive FIFO is full and new data from the receiver needs to be written into the FIFO)
     // W1C - Software can clear the error bit by writing any value to it
-    reg uart_rsr;
+    logic uart_rsr;
 
     // The UART_FSR (slave address 0x8) register is for checking the status of the FIFOs:
     //    4      3      2      1      0
@@ -74,19 +74,19 @@ module uart_controller #(
     // RXFF - RX FIFO full
     // TXFE - TX FIFO empty
     // BUSY - Transmitter is busy sending a character. This should be asserted as long as the TX FIFO is not empty
-    reg [4:0] uart_fsr;
+    logic [4:0] uart_fsr;
 
     // UART RX interface
-    wire  [DATA_BITS-1:0]  uart_rx_data;
-    wire                   uart_rx_data_valid;
+    logic [DATA_BITS-1:0]  uart_rx_data;
+    logic                  uart_rx_data_valid;
 
     // Receiver errors
-    wire                   overrun_error;
+    logic                  overrun_error;
 
     // UART TX interface
-    wire  [DATA_BITS-1:0]  uart_tx_data;
-    wire                   uart_tx_data_valid;
-    wire                   uart_tx_busy;
+    logic [DATA_BITS-1:0]  uart_tx_data;
+    logic                  uart_tx_data_valid;
+    logic                  uart_tx_busy;
 
     // Overrun errors occurs when the receiver has received a character but the RX FIFO is full
     // Also keep the overrun error signal asserted as long as the UART_RSR register has not been cleared

@@ -7,8 +7,8 @@ module biu_slave #(
     parameter ADDR_SPAN  = 32'h4,
     parameter ALIGNED    = 1'b1
 ) (
-    input  wire      clk,
-    input  wire      n_rst,
+    input  logic     clk,
+    input  logic     n_rst,
 
     // Bus interface
     bus_if           bus,
@@ -26,17 +26,17 @@ module biu_slave #(
     state_t state;
 
     // Internal registers for Slave interface outputs
-    reg [ADDR_WIDTH-1:0] address_q;
-    reg [DATA_WIDTH-1:0] data_in_q;
-    reg [DATA_WIDTH-1:0] data_out_q;
-    reg rnw_q;
+    logic [ADDR_WIDTH-1:0] address_q;
+    logic [DATA_WIDTH-1:0] data_in_q;
+    logic [DATA_WIDTH-1:0] data_out_q;
+    logic rnw_q;
 
     // Chip select
-    wire cs;
+    logic cs;
 
     // Bus control signals
-    wire bus_rnw;
-    wire bus_data_valid;
+    logic bus_rnw;
+    logic bus_data_valid;
 
     // Fan out the bus control signals
     assign bus_rnw        = bus.control[1];

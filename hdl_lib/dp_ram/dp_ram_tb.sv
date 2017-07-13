@@ -1,7 +1,7 @@
 module dp_ram_tb;
 
-    wire clk;
-    wire n_rst;
+    logic clk;
+    logic n_rst;
 
     dp_ram_if #(
         .DATA_WIDTH(8),
