@@ -1,32 +1,29 @@
 // SRAM controller
 // Interfaces with the IS61WV102416BLL SRAM chip
 
+`define SRAM_ADDR_WIDTH 20
+`define SRAM_DATA_WIDTH 16
+`define SRAM_ADDR_SPAN  2097152 // 2M bytes, or 1M 2-byte words
+
 module sram_controller #(
     parameter DATA_WIDTH       = 32,
     parameter ADDR_WIDTH       = 32,
-    parameter BASE_ADDR        = 32'h80000000,
-
-    localparam SRAM_ADDR_WIDTH = 20,
-    localparam SRAM_DATA_WIDTH = 16
+    parameter BASE_ADDR        = 32'h80000000
 ) (
-    input  logic clk,
-    input  logic n_rst,
+    input  logic                        clk,
+    input  logic                        n_rst,
 
-    bus_if       bus,
+    bus_if                              bus,
 
     // SRAM interface
-    output logic [SRAM_ADDR_WIDTH-1:0] o_sram_addr,
-    inout   wire [SRAM_DATA_WIDTH-1:0] io_sram_dq,
-    output logic                       o_sram_ce_n,
-    output logic                       o_sram_we_n,
-    output logic                       o_sram_oe_n,
-    output logic                       o_sram_lb_n,
-    output logic                       o_sram_ub_n
+    output logic [`SRAM_ADDR_WIDTH-1:0] o_sram_addr,
+    inout   wire [`SRAM_DATA_WIDTH-1:0] io_sram_dq,
+    output logic                        o_sram_ce_n,
+    output logic                        o_sram_we_n,
+    output logic                        o_sram_oe_n,
+    output logic                        o_sram_lb_n,
+    output logic                        o_sram_ub_n
 );
-
-    localparam DATA_HALF_WIDTH      = DATA_WIDTH/2;
-    localparam SRAM_DATA_HALF_WIDTH = SRAM_DATA_WIDTH/2;
-    localparam SRAM_ADDR_SPAN       = 2097152; // 2M bytes, or 1M 2-byte words
 
     // Need two cycles to transfer lower and upper 16-bits to/from SRAM
     // For write requests:
@@ -44,12 +41,12 @@ module sram_controller #(
     } state_t;
     state_t state;
 
-    logic [SRAM_ADDR_WIDTH-1:0] addr_q;
-    logic [SRAM_DATA_WIDTH-1:0] data_in_q;
-    logic [SRAM_DATA_WIDTH-1:0] data_out_q;
-    logic                       rnw_q;
+    logic [`SRAM_ADDR_WIDTH-1:0] addr_q;
+    logic [`SRAM_DATA_WIDTH-1:0] data_in_q;
+    logic [`SRAM_DATA_WIDTH-1:0] data_out_q;
+    logic                        rnw_q;
 
-    logic [SRAM_ADDR_WIDTH-1:0] sram_addr;
+    logic [`SRAM_ADDR_WIDTH-1:0] sram_addr;
     
     // BIU interface
     biu_slave_if #(
@@ -58,7 +55,7 @@ module sram_controller #(
     ) biu ();
 
     // SRAM addresses are 20 bits wide for 1M 16-bit addressable words
-    assign sram_addr = biu.address[SRAM_ADDR_WIDTH:1];
+    assign sram_addr = biu.address[`SRAM_ADDR_WIDTH:1];
 
     assign biu.data_valid = (state == SRAMUW);
     assign biu.data_out   = {io_sram_dq, data_out_q};
@@ -71,8 +68,7 @@ module sram_controller #(
     assign o_sram_ub_n = 'b0;
 
     // Send data out for writes
-    assign io_sram_dq = (state == SRAMLW && biu.en) ? (biu.rnw ? 'bz : biu.data_in[DATA_HALF_WIDTH-1:0]) :
-                        (state == SRAMUW) ? (rnw_q ? 'bz : data_in_q) : 'bz;
+    assign io_sram_dq = (state == SRAMLW && biu.en) ? (biu.rnw ? 'bz : biu.data_in[`SRAM_DATA_WIDTH-1:0]) : ((state == SRAMUW) ? (rnw_q ? 'bz : data_in_q) : 'bz);
 
     // Assign SRAM WE high for reads, low for writes
     always_comb begin
@@ -109,7 +105,7 @@ module sram_controller #(
             rnw_q     <= 'b0;
         end else if (biu.en && state == SRAMLW) begin
             addr_q    <= sram_addr + 1'b1;
-            data_in_q <= biu.data_in[DATA_WIDTH-1:DATA_HALF_WIDTH];
+            data_in_q <= biu.data_in[`SRAM_DATA_WIDTH*2-1:`SRAM_DATA_WIDTH];
             rnw_q     <= biu.rnw;
         end
     end
@@ -129,7 +125,7 @@ module sram_controller #(
         .ADDR_WIDTH(ADDR_WIDTH),
         .DATA_WIDTH(DATA_WIDTH),
         .BASE_ADDR(BASE_ADDR),
-        .ADDR_SPAN(SRAM_ADDR_SPAN),
+        .ADDR_SPAN(`SRAM_ADDR_SPAN),
         .ALIGNED(1)
     ) biu_slave_inst (
         .clk(clk),
