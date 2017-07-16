@@ -140,6 +140,7 @@ module uart_test (
     input  logic                    CLOCK_50,
     input  logic [17:17]            SW,
 
+    output logic [1:0]              GPIO,
     input  logic                    UART_RXD,
     output logic                    UART_TXD,
     output logic [6:0]              HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
@@ -150,6 +151,9 @@ module uart_test (
         .ADDR_WIDTH(`ADDR_WIDTH),
         .DATA_WIDTH(`DATA_WIDTH)
     ) bus ();
+
+    assign GPIO[0] = UART_RXD;
+    assign GPIO[1] = UART_TXD;
 
     uart_test_master #(
         .ADDR_WIDTH(`ADDR_WIDTH),
