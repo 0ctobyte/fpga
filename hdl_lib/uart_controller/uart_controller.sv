@@ -31,14 +31,22 @@ module uart_controller #(
     ) biu ();
 
     // RX FIFO interface
-    fifo_if #(
+    fifo_wr_if #(
         .DATA_WIDTH(DATA_BITS)
-    ) if_rx_fifo ();
+    ) if_rx_fifo_wr ();
+
+    fifo_rd_if #(
+        .DATA_WIDTH(DATA_BITS)
+    ) if_rx_fifo_rd ();
 
     // TX FIFO interface
-    fifo_if #(
+    fifo_wr_if #(
         .DATA_WIDTH(DATA_BITS)
-    ) if_tx_fifo ();
+    ) if_tx_fifo_wr ();
+
+    fifo_rd_if #(
+        .DATA_WIDTH(DATA_BITS)
+    ) if_tx_fifo_rd ();
 
     localparam UART_DR_ADDR = 'h0, UART_RSR_ADDR = 'h4, UART_FSR_ADDR = 'h8;
 
@@ -90,31 +98,31 @@ module uart_controller #(
 
     // Overrun errors occurs when the receiver has received a character but the RX FIFO is full
     // Also keep the overrun error signal asserted as long as the UART_RSR register has not been cleared
-    assign overrun_error = (if_rx_fifo.full && uart_rx_data_valid) | uart_rsr;
+    assign overrun_error = (if_rx_fifo_wr.full && uart_rx_data_valid) | uart_rsr;
 
     // On read requests, pop data out of the RX FIFO 
-    assign if_rx_fifo.rd_en =  biu.en && biu.rnw && (biu.address == UART_DR_ADDR);
+    assign if_rx_fifo_rd.rd_en =  biu.en && biu.rnw && (biu.address == UART_DR_ADDR);
 
     // Push data from the UART receiver on to the RX FIFO
-    assign if_rx_fifo.wr_en   = uart_rx_data_valid;
-    assign if_rx_fifo.data_in = uart_rx_data;
+    assign if_rx_fifo_wr.wr_en   = uart_rx_data_valid;
+    assign if_rx_fifo_wr.data_in = uart_rx_data;
 
     // On write requests, push data on to the TX FIFO
-    assign if_tx_fifo.wr_en   = biu.en && ~biu.rnw && (biu.address == UART_DR_ADDR);
-    assign if_tx_fifo.data_in = biu.data_in[DATA_BITS-1:0];
+    assign if_tx_fifo_wr.wr_en   = biu.en && ~biu.rnw && (biu.address == UART_DR_ADDR);
+    assign if_tx_fifo_wr.data_in = biu.data_in[DATA_BITS-1:0];
 
     // Pop data out of the TX FIFO to the UART transmitter if the transmitter is not busy
-    assign if_tx_fifo.rd_en = ~uart_tx_busy;
+    assign if_tx_fifo_rd.rd_en = ~uart_tx_busy;
 
     // Only assert data valid to the UART transmitter if the TX FIFO is not empty
-    assign uart_tx_data_valid = ~if_tx_fifo.empty;
-    assign uart_tx_data       = if_tx_fifo.data_out;
+    assign uart_tx_data_valid = ~if_tx_fifo_rd.empty;
+    assign uart_tx_data       = if_tx_fifo_rd.data_out;
 
     // Determine the BIU Slave inputs
     assign biu.data_valid = biu.en && biu.rnw;
     always_comb begin
         case (biu.address)
-            UART_DR_ADDR:  biu.data_out = {{(DATA_WIDTH-$bits(if_rx_fifo.data_out)){1'b0}}, if_rx_fifo.data_out};
+            UART_DR_ADDR:  biu.data_out = {{(DATA_WIDTH-$bits(if_rx_fifo_rd.data_out)){1'b0}}, if_rx_fifo_rd.data_out};
             UART_RSR_ADDR: biu.data_out = {{(DATA_WIDTH-$bits(uart_rsr)){1'b0}}, uart_rsr};
             UART_FSR_ADDR: biu.data_out = {{(DATA_WIDTH-$bits(uart_fsr)){1'b0}}, uart_fsr};
             default:       biu.data_out = 'b0;
@@ -137,7 +145,7 @@ module uart_controller #(
         if (~n_rst) begin
             uart_fsr <= 'b0;
         end else begin
-            uart_fsr <= {uart_tx_busy, if_tx_fifo.empty, if_rx_fifo.full, if_tx_fifo.full, if_rx_fifo.empty}; 
+            uart_fsr <= {uart_tx_busy, if_tx_fifo_rd.empty, if_rx_fifo_wr.full, if_tx_fifo_wr.full, if_rx_fifo_rd.empty}; 
         end
     end
 
@@ -160,7 +168,8 @@ module uart_controller #(
     ) rx_sync_fifo (
         .clk(clk),
         .n_rst(n_rst),
-        .if_fifo(if_rx_fifo)
+        .if_fifo_wr(if_rx_fifo_wr),
+        .if_fifo_rd(if_rx_fifo_rd)
     );
 
     uart_rx #(
@@ -183,7 +192,8 @@ module uart_controller #(
     ) tx_sync_fifo (
         .clk(clk),
         .n_rst(n_rst),
-        .if_fifo(if_tx_fifo)
+        .if_fifo_wr(if_tx_fifo_wr),
+        .if_fifo_rd(if_tx_fifo_rd)
     );
 
     uart_tx #(

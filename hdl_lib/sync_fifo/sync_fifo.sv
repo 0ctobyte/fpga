@@ -9,7 +9,8 @@ module sync_fifo #(
     input  logic n_rst,
 
     // FIFO interface
-    fifo_if.fifo if_fifo
+    fifo_wr_if.fifo if_fifo_wr,
+    fifo_rd_if.fifo if_fifo_rd
 );
 
     // RAM interface
@@ -30,8 +31,8 @@ module sync_fifo #(
 
     // Don't update the rd_addr register if the the fifo is empty even if rd_en is asserted
     // Similarly don't update the wr_addr register if the fifo is full even if wr_en is asserted
-    assign wr_addr_en = if_fifo.wr_en & (~if_fifo.full);
-    assign rd_addr_en = if_fifo.rd_en & (~if_fifo.empty);
+    assign wr_addr_en = if_fifo_wr.wr_en & (~if_fifo_wr.full);
+    assign rd_addr_en = if_fifo_rd.rd_en & (~if_fifo_rd.empty);
 
     // The FIFO memory read/write addresses don't include the MSB since that is only 
     // used to check for overflow (i.e. if_fifo.full) the FIFO entries not actually used to address
@@ -43,12 +44,12 @@ module sync_fifo #(
     assign if_dp_ram.rd_en = rd_addr_en;
 
     // wire up data signals between FIFO and RAM
-    assign if_dp_ram.data_in = if_fifo.data_in;
-    assign if_fifo.data_out  = if_dp_ram.data_out;
+    assign if_dp_ram.data_in = if_fifo_wr.data_in;
+    assign if_fifo_rd.data_out  = if_dp_ram.data_out;
 
     // Update the fifo full/empty signals
-    assign if_fifo.full  = ({~wr_addr[LOG2_FIFO_DEPTH], wr_addr[LOG2_FIFO_DEPTH-1:0]} == rd_addr);
-    assign if_fifo.empty = (wr_addr == rd_addr);
+    assign if_fifo_wr.full  = ({~wr_addr[LOG2_FIFO_DEPTH], wr_addr[LOG2_FIFO_DEPTH-1:0]} == rd_addr);
+    assign if_fifo_rd.empty = (wr_addr == rd_addr);
 
     // Update the wr_addr pointer
     always_ff @(posedge clk, negedge n_rst) begin : WR_ADDR_REG
